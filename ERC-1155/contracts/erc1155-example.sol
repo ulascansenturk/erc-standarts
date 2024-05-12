@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
-// Compatible with OpenZeppelin Contracts ^5.0.0
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
-import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Pausable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
 
-contract ERC1155Example is ERC1155, Ownable, ERC1155Pausable, ERC1155Supply {
-uint256 public publicPrice = 0.02 ether;
+contract ERC1155Example is ERC1155, Ownable, Pausable, ERC1155Supply, PaymentSplitter {
+    uint256 public publicPrice = 0.02 ether;
     uint256 public allowListPrice = 0.01 ether;
     uint256 public maxSupply = 20;
     uint public maxPerWallet = 3;
@@ -90,7 +90,7 @@ uint256 public publicPrice = 0.02 ether;
 
     function uri(uint256 _id) public view virtual override returns (string memory) {
         require(exists(_id), "URI: nonexistent token");
-        
+
         return string(abi.encodePacked(super.uri(_id), Strings.toString(_id), ".json"));
     }
 
@@ -108,5 +108,4 @@ uint256 public publicPrice = 0.02 ether;
     {
         super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
     }
-
 }
